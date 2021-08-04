@@ -4,8 +4,10 @@ const colors = document.getElementsByClassName("jsColor");
 const range = document.getElementById("jsRange");
 const mode = document.getElementById("jsMode");
 const save = document.getElementById("jsSave");
+const eraser = document.getElementById("jsErase");
 const clear = document.getElementById("jsClear");
-
+const colorpicker = document.getElementById("color_picker");
+const colorpick = document.getElementById("color_pick");
 const CANVAS_SIZE = 800;
 const INITIAL_COLOR = "2c2c2c";
 
@@ -19,6 +21,7 @@ ctx.fillStyle = INITIAL_COLOR;
 ctx.lineWidth = 2.5;
 
 let painting = false;
+let filling = false;
 
 function stopPainting(){
     painting = false;
@@ -45,31 +48,10 @@ function handleCanvasClick(){
 function handleContextMenu(event){
     event.preventDefault();
 }
-if(canvas){
-    canvas.addEventListener("mousemove", mouseOnMove);
-    canvas.addEventListener("mousedown", startPainting);
-    canvas.addEventListener("mouseup", stopPainting);
-    canvas.addEventListener("mouseleave", stopPainting);
-    canvas.addEventListener("click", handleCanvasClick);
-    canvas.addEventListener("contextmenu", handleContextMenu);
-}
-
-function handleColorClick(event){
-    const color = event.target.style.backgroundColor;
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-}
-Array.from(colors).forEach(color => color.addEventListener("click", handleColorClick));
-
 function handleRangeChange(event){
     const size = event.target.value;
     ctx.lineWidth = size;
 }
-if(range){
-    range.addEventListener("input", handleRangeChange);
-}
-
-let filling = false;
 function handleModeClick(){
     if(filling === true){
         filling = false;
@@ -79,10 +61,10 @@ function handleModeClick(){
         mode.innerText = "Paint";
     }
 }
-if(mode){
-    mode.addEventListener("click", handleModeClick);
+function handleClear(){
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 }
-
 function handleSave(){
     const image = canvas.toDataURL();
     const link = document.createElement("a");
@@ -90,12 +72,47 @@ function handleSave(){
     link.download = "PaintJS[🎨]";
     link.click();
 }
-if(save){
-    save.addEventListener("click", handleSave);
+function handleColorPicker(){
+    colorpick.click()
+}
+function handleColorPick(event){
+    const PickedColor = event.target.value;
+    colorpicker.style.backgroundColor = PickedColor;
+    ctx.strokeStyle = PickedColor;
+    ctx.fillStyle = PickedColor;
+}
+function handleColorClick(event){
+    const color = event.target.style.backgroundColor;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+}
+function handleEraser(event){
+    const x = event.offsetX;
+    const y = event.offsetY;
+    ctx.strokeStyle = ctx.fillStyle;
+    if(!painting) {
+        ctx.beginPath();
+        ctx.moveTo(x,y);
+    } else {
+        ctx.lineTo(x,y);
+        ctx.stroke();
+    }
 }
 
-function handleClear(){
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+if(canvas){
+    canvas.addEventListener("mousemove", mouseOnMove);
+    canvas.addEventListener("mousedown", startPainting);
+    canvas.addEventListener("mouseup", stopPainting);
+    canvas.addEventListener("mouseleave", stopPainting);
+    canvas.addEventListener("click", handleCanvasClick);
+    canvas.addEventListener("contextmenu", handleContextMenu);
 }
+Array.from(colors).forEach(color => color.addEventListener("click", handleColorClick));
+
+range.addEventListener("input", handleRangeChange);
+mode.addEventListener("click", handleModeClick);
 clear.addEventListener("click", handleClear);
+save.addEventListener("click", handleSave);
+colorpicker.addEventListener("click", handleColorPicker);
+colorpick.addEventListener("change", handleColorPick);
+eraser.addEventListener("click", handleEraser);

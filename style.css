@@ -45,7 +45,6 @@ body {
 .controls__btns button:active {
   transform: scale(0.98);
 }
-
 .controls .controls_colors {
   display: flex;
 }
@@ -55,4 +54,18 @@ body {
   border-radius: 25px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+#color_picker {
+  position: relative;
+  margin-left: 50px;
+}
+#color_picker input[type="color"] {
+  /* display: none; */
+  position: absolute;
+  width: 10px;
+  height: 20px;
+  border: none;
+  background-color: transparent;
+  z-index: -1;
+  left: 10px;
 }
